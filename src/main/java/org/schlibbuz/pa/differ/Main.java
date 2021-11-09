@@ -5,12 +5,17 @@
  */
 package org.schlibbuz.pa.differ;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,13 +50,13 @@ public class Main {
                     .concat("\\server_mods\\com.pa.nik.CompleteBalanceMod\\pa\\units")
             );
 
-            originals.forEach(System.out::println);
-            modded.forEach(System.out::println);
+            originals.forEach(Main::jsonToObject);
+            modded.forEach(Main::jsonToObject);
         }
 
     }
 
-    public static List<String> getFiles(String dir) {
+    static List<String> getFiles(String dir) {
         File directory = new File(dir);
         //Verify if it is a valid file name
         if (!directory.exists()) {
@@ -75,12 +80,27 @@ public class Main {
             .collect(Collectors.toList());
 
             // print all files
-            files.forEach(System.out::println);
             return files;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    static void jsonToObject(String path) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (Reader reader = new FileReader(path)) {
+
+            // Convert JSON to JsonElement, and later to String
+            JsonElement json = gson.fromJson(reader, JsonElement.class);
+
+            String jsonInString = gson.toJson(json);
+
+            System.out.println(jsonInString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
