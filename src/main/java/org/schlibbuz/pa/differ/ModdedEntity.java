@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -43,7 +44,7 @@ public class ModdedEntity {
         id = path.getFileName().toString();
         baseType = path.getParent().getFileName().toString();
         printPath(path);
-        fileMappings = collectFiles();
+        collectFiles();
         System.out.println("");
         diff = new Diff();
     }
@@ -57,16 +58,7 @@ public class ModdedEntity {
         );
     }
 
-    Map<String, FileVersion> collectFiles() {
-        try(Stream<Path> modFiles = Files.list(modFolder)) {
-            modFiles.forEach(System.out::println);
-        } catch(IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return null;
-    }
-
-    Path getOriginalsPath(Path path) {
+    Path getOriginalPath(Path path) {
         String titansPath = path.toString().replace(
                 config.get("paModsUnitsPath"),
                 config.get("paTitansUnitsPath")
@@ -82,6 +74,26 @@ public class ModdedEntity {
         return null;
     }
 
+    void addFileVersion(Path mod) {
+        var fileVersion = new FileVersion(mod, getOriginalPath(mod));
+        System.out.println(fileVersion);
+        System.out.println("");
+        fileMappings.put(mod.getFileName().toString(), fileVersion);
+    }
+
+    void collectFiles() {
+        fileMappings = new HashMap<>();
+        try(Stream<Path> modFiles = Files.list(modFolder)) {
+            modFiles
+                    .filter(modFile -> modFile.toString().endsWith(".json"))
+                    .forEach(this::addFileVersion);
+        } catch(IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+
+
     Diff diff(Path modPath, Path originalPath) {
         Diff diff = new Diff();
         if (originalPath == null) {
@@ -89,7 +101,7 @@ public class ModdedEntity {
         }
         JsonObject mod = jsonToObject(modPath);
         JsonObject original = jsonToObject(
-                getOriginalsPath(modPath)
+                getOriginalPath(modPath)
         );
         if (Objects.equals(mod, original)) {
             return null;

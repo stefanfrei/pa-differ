@@ -21,4 +21,16 @@ public class FileVersion {
         this.mod = mod;
         this.original = original;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("FileVersion {\n")
+        .append("  mod      -> ").append(mod)
+        .append("\n  original -> ").append(original)
+        .append("\n}");
+        return sb.toString();
+    }
+
+
 }
