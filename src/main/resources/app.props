@@ -1,2 +1,3 @@
-pa-steamlib=D:\\SteamLibrary\\steamapps\\common\\Planetary Annihilation Titans
-pa-appdata=C:\\Users\\Stefan\\AppData\\Local\\Uber Entertainment\\Planetary Annihilation
+pa-game-path=D:\\SteamLibrary\\steamapps\\common\\Planetary Annihilation Titans
+pa-mods-path=C:\\Users\\Stefan\\AppData\\Local\\Uber Entertainment\\Planetary Annihilation
+pa-mod-name=com.pa.nik.CompleteBalanceMod
